@@ -1,6 +1,6 @@
 # Framework Selection
 
-Based on the initial fleXRP project scope I will be using **Flask** in [PHASE_4.md](docs/PHASE_4.md).
+Based on the initial fleXRP project scope I will be using **Flask** in [PHASE_4.md](PHASE_4.md).
 
 ## Rationale
 
