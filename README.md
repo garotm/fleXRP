@@ -2,6 +2,10 @@
 
 This project aims to develop a Crypto-to-Fiat Point-of-Sale (POS) system that enables merchants to seamlessly accept XRP cryptocurrency payments while receiving instant settlement in their preferred fiat currency.
 
+## Business Case
+
+For a detailed business case outlining the project's value proposition, market opportunity, and financial projections, please refer to the [BUSINESS_CASE.md](BUSINESS_CASE.md) document.
+
 ## Project Goal
 
 Enable merchants to accept XRP payments and receive instant settlement in their local fiat currency.
