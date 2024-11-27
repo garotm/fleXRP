@@ -1,83 +1,228 @@
-# Phase 2.5 Infrastructure: Production Deployment (AWS with Terraform, Lambda & Fargate)
+# Phase 2.5: Enterprise Infrastructure Deployment
 
-This plan uses a combination of Lambda functions for asynchronous tasks and Fargate for the main application to balance cost-effectiveness and scalability.
+This phase implements a production-grade AWS infrastructure using Infrastructure as Code (IaC) with Terraform, implementing a serverless architecture combining AWS Lambda and Fargate for optimal scalability and cost-effectiveness.
 
-### Step 2.5.1: Infrastructure as Code (Terraform):
+## Infrastructure Overview
 
-You'll need to create Terraform configuration files to provision the following resources:
+![Infrastructure Diagram](./assets/infrastructure.png)
 
-* **Virtual Private Cloud (VPC):** Define your VPC, subnets (public and private), internet gateway, and route tables. Consider using at least two availability zones for redundancy.
+### Key Components
+- Multi-AZ VPC architecture
+- Serverless compute (Lambda & Fargate)
+- Managed database (RDS)
+- Content delivery (CloudFront & S3)
+- API management (API Gateway)
+- Security and monitoring
 
-* **Security Groups:** Create security groups to control network access to your resources. Restrict inbound traffic to only necessary ports (e.g., 443 for HTTPS, the database port).
+## Project Structure
+```
+terraform/
+├── environments/
+│   ├── dev/
+│   │   ├── main.tf
+│   │   ├── variables.tf
+│   │   └── terraform.tfvars
+│   └── prod/
+│       ├── main.tf
+│       ├── variables.tf
+│       └── terraform.tfvars
+├── modules/
+│   ├── networking/
+│   ├── database/
+│   ├── compute/
+│   ├── security/
+│   └── monitoring/
+└── backend/
+    └── main.tf
+```
 
-* **Amazon RDS (Relational Database Service):** Provision a managed PostgreSQL or MySQL database instance. Configure appropriate instance size, storage, and backups. Choose a multi-AZ deployment option for high availability.
+## Prerequisites
 
-* **Amazon S3 (Simple Storage Service):** Create an S3 bucket for storing static assets (e.g., images, CSS, JavaScript).
+### Required Tools
+- Terraform >= 1.0.0
+- AWS CLI configured
+- Docker (for local testing)
 
-* **Amazon API Gateway:** Create an API Gateway to act as a reverse proxy and handle routing requests to your Lambda functions and Fargate tasks.
+### AWS Account Requirements
+- Administrative access
+- Service quotas verified
+- Cost monitoring enabled
 
-* **Amazon IAM Roles:** Define IAM roles with appropriate permissions for each service (Lambda functions, Fargate tasks, API Gateway, etc.) to follow the principle of least privilege.
+## Infrastructure Components
 
-## Step 2.5.2: Application Deployment (Lambda & Fargate):
+### 1. State Management
+```hcl
+# Backend configuration
+terraform {
+  backend "s3" {
+    bucket         = "flexrp-terraform-state"
+    key            = "env/prod/terraform.tfstate"
+    region         = "us-west-2"
+    encrypt        = true
+    dynamodb_table = "terraform-state-lock"
+  }
+}
+```
 
-* **Payment Monitoring (Lambda):** Refactor your payment monitoring logic to run as a Lambda function triggered periodically (e.g., using CloudWatch Events). The Lambda function will connect to the XRPL, process transactions, and store the data in the RDS database.
+### 2. Networking
+- Multi-AZ VPC
+- Public/Private subnets
+- NAT Gateways
+- Transit Gateway
 
-* **API Endpoints (Lambda):** Create Lambda functions for your API endpoints (e.g., `/transactions`, `/xrp_rate`). These functions will handle requests from the API Gateway and interact with the database.
+### 3. Compute
+- Lambda functions
+- ECS/Fargate clusters
+- Auto-scaling configurations
+- Load balancers
 
-* **Main Application (ECS on Fargate):** Containerize your Flask application (including the `/transactions` and `/xrp_rate` endpoints). Deploy this application to ECS on Fargate. This ensures auto-scaling and minimal management. Use a load balancer in front of your Fargate tasks.
+### 4. Database
+- RDS Multi-AZ
+- Backup configurations
+- Parameter groups
+- Subnet groups
 
-* **Deployment Pipeline:** Create a CI/CD pipeline (e.g., using AWS CodePipeline) to automate the process of building, testing, and deploying your code.
+### 5. Security
+- WAF configurations
+- Security groups
+- IAM roles/policies
+- KMS keys
 
-## Step 2.5.3: Security and Monitoring:
+## Deployment Guide
 
-* **IAM Roles and Policies:** Carefully configure IAM roles and policies to restrict access to your resources.
-
-* **AWS WAF (Web Application Firewall):** Consider using AWS WAF to protect your API Gateway from common web attacks.
-
-* **AWS CloudTrail:** Enable CloudTrail to log API calls and other activity in your AWS account. This is crucial for auditing and security analysis.
-
-* **CloudWatch:** Configure CloudWatch to monitor the performance and health of your Lambda functions, Fargate tasks, and database. Set up alarms to notify you of potential issues.
-
-## Step 2.5.4: Terraform Configuration Example (Snippet):
-
-This is a simplified example; you'll need to expand it significantly.
-
+### 1. Initialize Backend
 ```bash
-# VPC
-resource "aws_vpc" "main" {
-  cidr_block = "10.0.0.0/16"
-  # ... other VPC configurations ...
-}
+# Create S3 bucket and DynamoDB table for state
+cd terraform/backend
+terraform init
+terraform apply
+```
 
-# RDS (PostgreSQL example)
-resource "aws_db_instance" "main" {
-  # ... RDS configurations ...
-  allocated_storage    = 20
-  engine               = "postgres"
-  engine_version       = "14.5"
-  instance_class       = "db.t3.medium"
-  multi_az             = true
-  username             = "myuser"
-  password             = "mypassword" #Securely manage this!  Don't hardcode!
-  db_name              = "mydatabase"
+### 2. Deploy Infrastructure
+```bash
+# Deploy development environment
+cd terraform/environments/dev
+terraform init
+terraform plan -out=plan.tfplan
+terraform apply "plan.tfplan"
+```
+
+### 3. Verify Deployment
+```bash
+# Verify resources
+aws ec2 describe-vpcs
+aws rds describe-db-instances
+aws lambda list-functions
+```
+
+## Security Considerations
+
+### 1. Network Security
+- VPC Flow Logs enabled
+- Security groups limited to required ports
+- WAF rules implemented
+- Network ACLs configured
+
+### 2. Data Security
+- Encryption at rest
+- Encryption in transit
+- Key rotation
+- Backup encryption
+
+### 3. Access Control
+- IAM roles with least privilege
+- Resource policies
+- Service control policies
+- AWS Organizations integration
+
+## Monitoring & Alerting
+
+### 1. CloudWatch Configuration
+```hcl
+module "monitoring" {
+  source = "../../modules/monitoring"
+  
+  alarm_email     = var.alarm_email
+  lambda_functions = local.lambda_functions
+  rds_instances   = local.rds_instances
 }
 ```
 
-## Lambda Function (Example)
+### 2. Metrics
+- CPU utilization
+- Memory usage
+- API latency
+- Error rates
 
-```python
-resource "aws_lambda_function" "payment_monitor" {
-  # ... Lambda function configurations ...
-}
+### 3. Logging
+- CloudWatch Logs
+- VPC Flow Logs
+- CloudTrail
+- S3 access logs
+
+## Cost Optimization
+
+### 1. Resource Sizing
+- Right-sized instances
+- Auto-scaling policies
+- Reserved instances
+- Savings plans
+
+### 2. Cost Monitoring
+- AWS Cost Explorer
+- Budget alerts
+- Resource tagging
+- Usage reports
+
+## Disaster Recovery
+
+### 1. Backup Strategy
+- Automated backups
+- Cross-region replication
+- Point-in-time recovery
+- Backup testing
+
+### 2. Recovery Procedures
+- RDS failover
+- Multi-AZ failover
+- Region failover
+- Data restoration
+
+## Maintenance
+
+### 1. Updates
+- Security patches
+- Version upgrades
+- Configuration updates
+- Infrastructure updates
+
+### 2. Monitoring
+- Performance metrics
+- Cost analysis
+- Security audits
+- Compliance checks
+
+## Troubleshooting
+
+### Common Issues
+1. State Lock Issues
+```bash
+# Release state lock
+aws dynamodb delete-item \
+    --table-name terraform-state-lock \
+    --key '{"LockID": {"S": "terraform-state"}}'
 ```
 
-## ECS on Fargate (Example)
-
-```python
-resource "aws_ecs_cluster" "main" {
-  name = "fleXRP-cluster"
-}
-#... more ECS & Fargate configs ...
+2. Deployment Failures
+```bash
+# Get detailed error logs
+terraform plan -debug
+terraform apply -debug
 ```
 
-This detailed plan provides a robust foundation for your AWS deployment. Remember to replace placeholder values with your specific configurations. Consult the AWS documentation for detailed instructions on each resource and service. Terraform modules can simplify the configuration and management of resources. Remember to thoroughly test and monitor your application in the cloud environment.
+## Support
+
+For infrastructure support:
+- Documentation: `/docs/infrastructure`
+- Issues: GitHub Issues
+- Email: devops@flexrp.com
