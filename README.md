@@ -1,96 +1,226 @@
-# fleXRP - Crypto-to-Fiat Point-of-Sale System
+# fleXRP - Enterprise Crypto-to-Fiat Point-of-Sale System
 
-This project aims to develop a Crypto-to-Fiat Point-of-Sale (POS) system that enables merchants to seamlessly accept XRP cryptocurrency payments while receiving instant settlement in their preferred fiat currency.
+A production-grade Point-of-Sale (POS) system enabling merchants to accept XRP cryptocurrency payments with instant fiat currency settlement.
+
+## Overview
+
+fleXRP provides a secure, scalable, and reliable platform for merchants to integrate cryptocurrency payments into their existing business operations. The system handles real-time XRP payment processing, fiat conversion, and automated settlement.
 
 ## Business Case
 
-For a detailed business case outlining the project's value proposition, market opportunity, and financial projections, please refer to the [BUSINESS_CASE.md](BUSINESS_CASE.md) document.
-
-## Project Goal
-
-Enable merchants to accept XRP payments and receive instant settlement in their local fiat currency.
+For detailed information about the project's value proposition, market analysis, and financial projections, see [BUSINESS_CASE.md](BUSINESS_CASE.md).
 
 ## Technology Stack
 
-* Python
-* XRPL
-* REST APIs (for payment gateways/exchanges)
+### Core Technologies
+- Python 3.9+
+- XRPL (xrpl-py)
+- Flask/SQLite
+- REST APIs
+
+### Development Tools
+- Poetry (dependency management)
+- pytest (testing)
+- mypy (type checking)
+- black (code formatting)
+- flake8 (linting)
+
+### Infrastructure
+- Docker
+- GitHub Actions (CI/CD)
+- Prometheus/Grafana (monitoring)
+
+## Project Architecture
+
+```
+fleXRP/
+├── src/
+│   ├── core/           # Core business logic
+│   ├── api/            # REST API endpoints
+│   ├── models/         # Data models
+│   └── utils/          # Utility functions
+├── tests/              # Test suite
+├── docs/              # Documentation
+└── deployment/        # Deployment configurations
+```
 
 ## Project Phases
 
 ### Phase 1: Foundation (XRPL & Fiat Conversion)
 
-* **Step 1.1: XRPL Account Setup**
-    * Use `xrpl-py` to generate a unique XRPL account for each merchant.
-    * Securely store the account credentials (seed phrase, public/private keys).
-    * Implement functionality to generate XRPL addresses for receiving payments.
+#### Step 1.1: XRPL Account Setup
+- Secure wallet generation with encryption
+- HSM integration for key management
+- Multi-signature support
+- Automated backup systems
 
-* **Step 1.2: Payment Monitoring**
-    * Use `xrpl-py` to connect to an XRPL node (e.g., a public node or your own).
-    * Write code to continuously monitor the XRPL ledger for incoming XRP payments to the merchant's account.
-    * Implement a mechanism to identify and track individual transactions.
+#### Step 1.2: Payment Monitoring
+- Real-time transaction monitoring
+- WebSocket integration for instant updates
+- Transaction validation and verification
+- Duplicate payment protection
+- Rate limiting and DoS protection
 
-* **Step 1.3: Fiat Conversion API Integration**
-    * Select a reliable API that provides real-time XRP to fiat exchange rates (e.g., CoinMarketCap API, a specific exchange's API).
-    * Obtain API keys and understand the API's request format and response structure.
-    * Write Python code to fetch the current XRP to fiat exchange rate from the API.
+#### Step 1.3: Fiat Conversion
+- Multiple exchange rate providers
+- Failover mechanisms
+- Rate caching
+- Slippage protection
+- Exchange rate averaging
 
-* **Step 1.4: Fiat Calculation**
-    * Develop a function to calculate the fiat equivalent of the received XRP payment based on the current exchange rate.
-    * Consider incorporating a small buffer to account for potential exchange rate fluctuations during processing.
+#### Step 1.4: Transaction Processing
+- Atomic transaction handling
+- Database transaction management
+- Event logging and tracking
+- Error recovery mechanisms
 
-### Phase 2: Merchant Interface (Basic)
+### Phase 2: Merchant Interface
 
-* **Step 2.1: Web Framework Setup**
-    * Choose a Python web framework (Flask or Django) to build the merchant interface.
-    * Set up the project structure, including templates, static files, and necessary configurations.
+#### Step 2.1: Web Framework
+- Secure session management
+- Rate limiting
+- CSRF protection
+- XSS prevention
+- Input validation
 
-* **Step 2.2: Account Dashboard**
-    * Create a merchant login system to secure access to the dashboard.
-    * Display the merchant's XRPL account balance and recent transaction history.
-    * Allow merchants to view details of individual transactions (amount, time, sender address).
+#### Step 2.2: Dashboard
+- Real-time updates via WebSocket
+- Transaction monitoring
+- Analytics and reporting
+- Audit logging
+- Export capabilities
 
-* **Step 2.3: Payment Request Generation**
-    * Implement a feature to generate payment requests with specific XRP amounts.
-    * Create QR codes that encode the payment request information (merchant address, amount).
-    * Allow merchants to download or display the QR codes for customers to scan.
+#### Step 2.3: Payment Processing
+- QR code generation
+- Payment request validation
+- Expiration handling
+- Rate locking
+- Payment status tracking
 
-* **Step 2.4: Fiat Settlement Settings**
-    * Provide a section for merchants to configure their preferred fiat settlement method (e.g., bank account, PayPal).
-    * Collect and securely store the necessary settlement details.
+#### Step 2.4: Settlement
+- Multiple settlement options
+- Automated reconciliation
+- Settlement verification
+- Failure recovery
+- Audit trail
 
-### Phase 3: Payment Processing and Settlement
+### Phase 3: Security & Compliance
 
-* **Step 3.1: Payment Confirmation**
-    * When an incoming XRP payment is detected, verify the transaction on the XRPL.
-    * Ensure the payment amount matches the expected amount in the payment request.
+#### Step 3.1: Security Features
+- Two-factor authentication
+- Role-based access control
+- API key management
+- Rate limiting
+- DDoS protection
 
-* **Step 3.2: Real-time Conversion**
-    * Fetch the latest XRP to fiat exchange rate from the API.
-    * Calculate the fiat equivalent of the received XRP payment.
+#### Step 3.2: Compliance
+- KYC/AML integration
+- Transaction monitoring
+- Regulatory reporting
+- Data retention policies
+- Privacy controls
 
-* **Step 3.3: Fiat Settlement**
-    * Initiate a fiat transfer to the merchant's specified settlement account.
-    * Use the payment provider's API to automate the transfer process.
-    * Record the transaction details and update the merchant's balance.
+#### Step 3.3: Monitoring
+- System health monitoring
+- Transaction monitoring
+- Performance metrics
+- Alert systems
+- Audit logging
 
-### Phase 4: Enhancements (Ongoing)
+## Development Setup
 
-* **Step 4.1: UI/UX Improvements**
-    * Refine the design and usability of the merchant interface.
-    * Add features like charts, graphs, and visualizations to present data effectively.
+```bash
+# Clone repository
+git clone https://github.com/yourusername/fleXRP.git
+cd fleXRP
 
-* **Step 4.2: Advanced Features**
-    * Explore integrating support for multiple cryptocurrencies.
-    * Implement a customer loyalty program using XRPL tokens.
-    * Add more detailed reporting and analytics for merchants.
+# Install dependencies
+poetry install
 
-* **Step 4.3: Security Hardening**
-    * Conduct thorough security testing to identify and address vulnerabilities.
-    * Implement measures like two-factor authentication and encryption to protect sensitive data.
+# Set up environment variables
+cp .env.example .env
+# Edit .env with your configuration
 
-## Important Notes
+# Initialize database
+poetry run python -m src.core.db.init
 
-* This outline provides a structured approach. You can adjust the order or complexity of steps based on your preferences and learning progress.
-* Remember to test each component thoroughly as you build it.
-* Don't hesitate to ask for clarification or assistance with any step.
+# Run tests
+poetry run pytest
+
+# Start development server
+poetry run python -m src.api.server
+```
+
+## Environment Variables
+
+```bash
+# Required
+XRPL_NODE_URL=wss://s.altnet.rippletest.net:51233
+MERCHANT_ADDRESS=your_xrpl_address
+COINMARKETCAP_API_KEY=your_api_key
+
+# Optional
+LOG_LEVEL=INFO
+RATE_LIMIT=100
+CACHE_TIMEOUT=300
+```
+
+## Production Deployment
+
+### Prerequisites
+- Docker
+- Docker Compose
+- SSL Certificate
+- Hardware Security Module (recommended)
+
+### Deployment Steps
+1. Configure environment variables
+2. Build Docker images
+3. Initialize databases
+4. Deploy monitoring stack
+5. Start application services
+
+## Security Considerations
+
+- All sensitive data must be encrypted at rest
+- Use secure key management solutions
+- Implement rate limiting
+- Enable audit logging
+- Regular security updates
+- Periodic security audits
+- Backup and recovery procedures
+
+## Monitoring & Maintenance
+
+- System health monitoring
+- Transaction monitoring
+- Performance metrics
+- Error tracking
+- Regular backups
+- Database maintenance
+- Security updates
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Implement changes
+4. Add tests
+5. Submit pull request
+
+## License
+
+[MIT License](LICENSE)
+
+## Support
+
+For support and inquiries:
+- GitHub Issues
+- Documentation: `/docs`
+- Email: support@flexrp.com
+
+## Acknowledgments
+
+- XRPL Foundation
+- OpenSource Contributors
+- Security Researchers
