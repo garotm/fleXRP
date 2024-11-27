@@ -64,7 +64,6 @@ def monitor_payments():
             print(f"Error monitoring payments: {e}")
         time.sleep(5)
 
-
 def get_xrp_to_usd_rate():
     url = "https://pro-api.coinmarketcap.com/v1/cryptocurrency/quotes/latest"
     parameters = {'symbol': 'XRP', 'convert': 'USD'}
@@ -77,7 +76,6 @@ def get_xrp_to_usd_rate():
     except requests.exceptions.RequestException as e:
         print(f"Error fetching XRP rate: {e}")
         return None
-
 
 @app.route('/transactions')
 def get_transactions():
@@ -95,7 +93,6 @@ def get_xrp_rate():
         return jsonify({'rate': rate})
     else:
         return jsonify({'error':'Could not fetch XRP rate'}), 500
-
 
 if __name__ == '__main__':
     payment_monitor = Thread(target=monitor_payments, daemon=True)
