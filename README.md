@@ -1,226 +1,222 @@
-# fleXRP - Enterprise Crypto-to-Fiat Point-of-Sale System
+# fleXRP - Enterprise Crypto-to-Fiat Payment System
 
-A production-grade Point-of-Sale (POS) system enabling merchants to accept XRP cryptocurrency payments with instant fiat currency settlement.
+A production-grade payment processing system enabling merchants to accept XRP cryptocurrency payments with instant fiat settlement.
 
-## Overview
-
-fleXRP provides a secure, scalable, and reliable platform for merchants to integrate cryptocurrency payments into their existing business operations. The system handles real-time XRP payment processing, fiat conversion, and automated settlement.
-
-## Business Case
-
-For detailed information about the project's value proposition, market analysis, and financial projections, see [BUSINESS_CASE.md](BUSINESS_CASE.md).
-
-## Technology Stack
-
-### Core Technologies
-- Python 3.9+
-- XRPL (xrpl-py)
-- Flask/SQLite
-- REST APIs
-
-### Development Tools
-- Poetry (dependency management)
-- pytest (testing)
-- mypy (type checking)
-- black (code formatting)
-- flake8 (linting)
-
-### Infrastructure
-- Docker
-- GitHub Actions (CI/CD)
-- Prometheus/Grafana (monitoring)
-
-## Project Architecture
+## System Architecture
 
 ```
 fleXRP/
 ├── src/
-│   ├── core/           # Core business logic
-│   ├── api/            # REST API endpoints
-│   ├── models/         # Data models
-│   └── utils/          # Utility functions
-├── tests/              # Test suite
-├── docs/              # Documentation
-└── deployment/        # Deployment configurations
+│   ├── core/              # Core system components
+│   │   ├── exceptions.py  # Custom exception hierarchy
+│   │   ├── error_handlers.py  # Error handling utilities
+│   │   ├── metrics.py     # Metrics collection
+│   │   └── monitoring.py  # System monitoring
+│   ├── services/          # Business logic services
+│   │   ├── payment_monitor.py  # XRPL payment monitoring
+│   │   ├── wallet_service.py   # Wallet management
+│   │   └── rate_service.py     # Exchange rates
+│   ├── api/               # API endpoints
+│   │   ├── routes.py      # Route definitions
+│   │   └── handlers.py    # Request handlers
+│   └── app.py            # Application entry point
+├── tests/                # Test suite
+├── terraform/            # Infrastructure as Code
+├── docs/                # Documentation
+└── config/              # Configuration files
 ```
 
-## Project Phases
+## Core Features
 
-### Phase 1: Foundation (XRPL & Fiat Conversion)
-
-#### Step 1.1: XRPL Account Setup
-- Secure wallet generation with encryption
-- HSM integration for key management
+### Payment Processing
+- Real-time XRPL transaction monitoring
+- Automated payment verification
 - Multi-signature support
-- Automated backup systems
+- Rate-limiting and fraud prevention
 
-#### Step 1.2: Payment Monitoring
-- Real-time transaction monitoring
-- WebSocket integration for instant updates
-- Transaction validation and verification
-- Duplicate payment protection
-- Rate limiting and DoS protection
+### Wallet Management
+- Secure wallet generation
+- Encrypted storage
+- Key rotation
+- Multi-wallet support
 
-#### Step 1.3: Fiat Conversion
-- Multiple exchange rate providers
-- Failover mechanisms
+### Rate Management
+- Real-time exchange rates
+- Multi-exchange aggregation
 - Rate caching
 - Slippage protection
-- Exchange rate averaging
 
-#### Step 1.4: Transaction Processing
-- Atomic transaction handling
-- Database transaction management
-- Event logging and tracking
-- Error recovery mechanisms
-
-### Phase 2: Merchant Interface
-
-#### Step 2.1: Web Framework
-- Secure session management
-- Rate limiting
-- CSRF protection
-- XSS prevention
-- Input validation
-
-#### Step 2.2: Dashboard
-- Real-time updates via WebSocket
-- Transaction monitoring
-- Analytics and reporting
-- Audit logging
-- Export capabilities
-
-#### Step 2.3: Payment Processing
-- QR code generation
-- Payment request validation
-- Expiration handling
-- Rate locking
-- Payment status tracking
-
-#### Step 2.4: Settlement
-- Multiple settlement options
-- Automated reconciliation
-- Settlement verification
-- Failure recovery
-- Audit trail
-
-### Phase 3: Security & Compliance
-
-#### Step 3.1: Security Features
-- Two-factor authentication
+### Security
+- Encrypted data storage
 - Role-based access control
-- API key management
-- Rate limiting
-- DDoS protection
-
-#### Step 3.2: Compliance
-- KYC/AML integration
-- Transaction monitoring
-- Regulatory reporting
-- Data retention policies
-- Privacy controls
-
-#### Step 3.3: Monitoring
-- System health monitoring
-- Transaction monitoring
-- Performance metrics
-- Alert systems
 - Audit logging
+- Rate limiting
 
-## Development Setup
+## Technical Stack
 
+### Backend
+- Python 3.9+
+- Flask (API framework)
+- XRPL-py (XRPL integration)
+- SQLAlchemy (Database ORM)
+- Prometheus (Metrics)
+- Grafana (Monitoring)
+
+### Infrastructure
+- AWS (Cloud platform)
+- Terraform (IaC)
+- Docker (Containerization)
+- GitHub Actions (CI/CD)
+
+### Storage
+- PostgreSQL (Primary database)
+- Redis (Caching)
+- S3 (File storage)
+
+## Getting Started
+
+### Prerequisites
 ```bash
-# Clone repository
-git clone https://github.com/yourusername/fleXRP.git
-cd fleXRP
+# Python 3.9+
+python --version
 
-# Install dependencies
+# Poetry (dependency management)
+curl -sSL https://install.python-poetry.org | python3 -
+
+# AWS CLI
+aws --version
+
+# Terraform
+terraform --version
+```
+
+### Installation
+
+1. Clone repository:
+```bash
+git clone https://github.com/your-org/flexrp.git
+cd flexrp
+```
+
+2. Install dependencies:
+```bash
 poetry install
+```
 
-# Set up environment variables
+3. Configure environment:
+```bash
 cp .env.example .env
 # Edit .env with your configuration
+```
 
-# Initialize database
-poetry run python -m src.core.db.init
+4. Initialize infrastructure:
+```bash
+cd terraform
+terraform init
+terraform apply
+```
 
+5. Start application:
+```bash
+poetry run python src/app.py
+```
+
+## Development
+
+### Code Style
+- Black for formatting
+- Flake8 for linting
+- MyPy for type checking
+- Pytest for testing
+
+### Testing
+```bash
 # Run tests
 poetry run pytest
 
-# Start development server
-poetry run python -m src.api.server
+# Run with coverage
+poetry run pytest --cov=src
+
+# Type checking
+poetry run mypy src
 ```
 
-## Environment Variables
-
+### Infrastructure
 ```bash
-# Required
-XRPL_NODE_URL=wss://s.altnet.rippletest.net:51233
-MERCHANT_ADDRESS=your_xrpl_address
-COINMARKETCAP_API_KEY=your_api_key
+# Initialize Terraform
+cd terraform
+terraform init
 
-# Optional
-LOG_LEVEL=INFO
-RATE_LIMIT=100
-CACHE_TIMEOUT=300
+# Plan changes
+terraform plan
+
+# Apply changes
+terraform apply
 ```
 
-## Production Deployment
+## Deployment
 
-### Prerequisites
-- Docker
-- Docker Compose
-- SSL Certificate
-- Hardware Security Module (recommended)
+### Production Setup
+1. Configure AWS credentials
+2. Update production configuration
+3. Deploy infrastructure
+4. Configure monitoring
+5. Enable alerts
 
-### Deployment Steps
-1. Configure environment variables
-2. Build Docker images
-3. Initialize databases
-4. Deploy monitoring stack
-5. Start application services
-
-## Security Considerations
-
-- All sensitive data must be encrypted at rest
-- Use secure key management solutions
-- Implement rate limiting
-- Enable audit logging
-- Regular security updates
-- Periodic security audits
-- Backup and recovery procedures
-
-## Monitoring & Maintenance
-
-- System health monitoring
+### Monitoring
+- System metrics
 - Transaction monitoring
-- Performance metrics
 - Error tracking
-- Regular backups
-- Database maintenance
+- Performance metrics
+- Resource utilization
+
+### Maintenance
+- Database backups
+- Log rotation
 - Security updates
+- Performance optimization
+
+## Security
+
+### Data Protection
+- Encrypted storage
+- Secure key management
+- Access control
+- Audit logging
+
+### Compliance
+- KYC/AML integration
+- Regulatory reporting
+- Data retention
+- Privacy protection
+
+## Support
+
+### Documentation
+- API documentation: `/docs/api`
+- Architecture: `/docs/architecture`
+- Operations: `/docs/operations`
+- Security: `/docs/security`
+
+### Contact
+- Technical Support: support@flexrp.com
+- Security Issues: security@flexrp.com
+- General Inquiries: info@flexrp.com
 
 ## Contributing
 
-1. Fork the repository
-2. Create a feature branch
+1. Fork repository
+2. Create feature branch
 3. Implement changes
 4. Add tests
 5. Submit pull request
 
 ## License
 
-[MIT License](LICENSE)
-
-## Support
-
-For support and inquiries:
-- GitHub Issues
-- Documentation: `/docs`
-- Email: support@flexrp.com
+Copyright (c) 2024 fleXRP. All rights reserved.
 
 ## Acknowledgments
 
 - XRPL Foundation
-- OpenSource Contributors
+- Open Source Contributors
 - Security Researchers
