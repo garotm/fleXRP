@@ -1,0 +1,91 @@
+/* Base Styles */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom Components */
+@layer components {
+    .nav-link {
+        @apply inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium;
+    }
+    
+    .nav-link:not(.active) {
+        @apply border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700;
+    }
+    
+    .nav-link.active {
+        @apply border-indigo-500 text-gray-900;
+    }
+    
+    .btn-primary {
+        @apply inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+    }
+    
+    .btn-secondary {
+        @apply inline-flex justify-center py-2 px-4 border border-gray-300 shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500;
+    }
+    
+    .form-input {
+        @apply shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md;
+    }
+    
+    .alert {
+        @apply rounded-md p-4;
+    }
+    
+    .alert-success {
+        @apply bg-green-50 text-green-800;
+    }
+    
+    .alert-error {
+        @apply bg-red-50 text-red-800;
+    }
+    
+    .alert-warning {
+        @apply bg-yellow-50 text-yellow-800;
+    }
+    
+    .alert-info {
+        @apply bg-blue-50 text-blue-800;
+    }
+}
+
+/* Custom Utilities */
+@layer utilities {
+    .scrollbar-hide {
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+    }
+    
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* Animation Classes */
+.fade-enter-active,
+.fade-leave-active {
+    transition: opacity 0.3s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+    opacity: 0;
+}
+
+/* Custom Styles */
+.qr-code {
+    image-rendering: pixelated;
+    image-rendering: -moz-crisp-edges;
+    image-rendering: crisp-edges;
+}
+
+.chart-container {
+    position: relative;
+    height: 300px;
+}
+
+/* Dark Mode Styles */
+@media (prefers-color-scheme: dark) {
+    /* Add dark mode styles here */
+} 

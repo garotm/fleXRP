@@ -1,0 +1,168 @@
+{% extends "base.html" %}
+
+{% block title %}Settings - fleXRP{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto" x-data="settingsManager">
+    <!-- Navigation Tabs -->
+    <div class="border-b border-gray-200">
+        <nav class="-mb-px flex space-x-8" aria-label="Settings">
+            <button @click="activeTab = 'general'"
+                    :class="{'border-indigo-500 text-indigo-600': activeTab === 'general'}"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                General Settings
+            </button>
+            <button @click="activeTab = 'security'"
+                    :class="{'border-indigo-500 text-indigo-600': activeTab === 'security'}"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Security
+            </button>
+            <button @click="activeTab = 'notifications'"
+                    :class="{'border-indigo-500 text-indigo-600': activeTab === 'notifications'}"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                Notifications
+            </button>
+            <button @click="activeTab = 'api'"
+                    :class="{'border-indigo-500 text-indigo-600': activeTab === 'api'}"
+                    class="border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                API Access
+            </button>
+        </nav>
+    </div>
+
+    <!-- General Settings -->
+    <div x-show="activeTab === 'general'" class="mt-6">
+        <form @submit.prevent="saveGeneralSettings" class="space-y-6 bg-white shadow rounded-lg p-6">
+            <div>
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Business Information</h3>
+                <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <div class="sm:col-span-4">
+                        <label for="business_name" class="block text-sm font-medium text-gray-700">Business Name</label>
+                        <div class="mt-1">
+                            <input type="text" name="business_name" id="business_name" x-model="settings.business_name"
+                                   class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                    </div>
+
+                    <div class="sm:col-span-4">
+                        <label for="contact_email" class="block text-sm font-medium text-gray-700">Contact Email</label>
+                        <div class="mt-1">
+                            <input type="email" name="contact_email" id="contact_email" x-model="settings.contact_email"
+                                   class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-6">
+                <h3 class="text-lg font-medium leading-6 text-gray-900">Payment Settings</h3>
+                <div class="mt-6 grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-6">
+                    <div class="sm:col-span-3">
+                        <label for="default_currency" class="block text-sm font-medium text-gray-700">Default Currency</label>
+                        <select id="default_currency" name="default_currency" x-model="settings.default_currency"
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-3">
+                        <label for="settlement_currency" class="block text-sm font-medium text-gray-700">Settlement Currency</label>
+                        <select id="settlement_currency" name="settlement_currency" x-model="settings.settlement_currency"
+                                class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                            <option value="XRP">XRP</option>
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                        </select>
+                    </div>
+
+                    <div class="sm:col-span-4">
+                        <div class="flex items-start">
+                            <div class="flex items-center h-5">
+                                <input id="auto_convert" name="auto_convert" type="checkbox" x-model="settings.auto_convert"
+                                       class="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 rounded">
+                            </div>
+                            <div class="ml-3 text-sm">
+                                <label for="auto_convert" class="font-medium text-gray-700">Automatic Conversion</label>
+                                <p class="text-gray-500">Automatically convert XRP to settlement currency upon receipt</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="pt-5">
+                <div class="flex justify-end">
+                    <button type="button" class="bg-white py-2 px-4 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Cancel
+                    </button>
+                    <button type="submit"
+                            class="ml-3 inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
+                        Save Changes
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Security Settings -->
+    <div x-show="activeTab === 'security'" class="mt-6">
+        <!-- Security settings content -->
+        {% include 'settings/security.html' %}
+    </div>
+
+    <!-- Notification Settings -->
+    <div x-show="activeTab === 'notifications'" class="mt-6">
+        <!-- Notification settings content -->
+        {% include 'settings/notifications.html' %}
+    </div>
+
+    <!-- API Settings -->
+    <div x-show="activeTab === 'api'" class="mt-6">
+        <!-- API settings content -->
+        {% include 'settings/api.html' %}
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('settingsManager', () => ({
+        activeTab: 'general',
+        settings: {{ settings|tojson|safe }},
+        
+        async saveGeneralSettings() {
+            try {
+                const response = await fetch("{{ url_for('settings.save_general') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': CSRF_TOKEN
+                    },
+                    body: JSON.stringify(this.settings)
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    // Show success notification
+                    this.$dispatch('show-notification', {
+                        type: 'success',
+                        message: 'Settings saved successfully'
+                    });
+                } else {
+                    throw new Error(data.message);
+                }
+            } catch (error) {
+                console.error('Error saving settings:', error);
+                this.$dispatch('show-notification', {
+                    type: 'error',
+                    message: 'Failed to save settings'
+                });
+            }
+        }
+    }));
+});
+</script>
+{% endblock %} 

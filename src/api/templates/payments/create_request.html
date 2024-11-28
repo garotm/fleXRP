@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Create Payment Request - fleXRP{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto" x-data="paymentRequest">
+    <div class="bg-white shadow rounded-lg">
+        <div class="px-6 py-4 border-b border-gray-200">
+            <h2 class="text-xl font-semibold text-gray-800">Create Payment Request</h2>
+        </div>
+        
+        <form @submit.prevent="submitRequest" class="p-6 space-y-6">
+            <!-- Amount Input -->
+            <div>
+                <label for="amount" class="block text-sm font-medium text-gray-700">Amount</label>
+                <div class="mt-1 relative rounded-md shadow-sm">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <span class="text-gray-500 sm:text-sm" x-text="currency === 'USD' ? '$' : '€'"></span>
+                    </div>
+                    <input type="number" name="amount" id="amount" x-model="amount" step="0.01" min="0"
+                           class="focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-7 pr-12 sm:text-sm border-gray-300 rounded-md"
+                           placeholder="0.00">
+                    <div class="absolute inset-y-0 right-0 flex items-center">
+                        <select x-model="currency"
+                                class="focus:ring-indigo-500 focus:border-indigo-500 h-full py-0 pl-2 pr-7 border-transparent bg-transparent text-gray-500 sm:text-sm rounded-md">
+                            <option>USD</option>
+                            <option>EUR</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Description Input -->
+            <div>
+                <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+                <div class="mt-1">
+                    <textarea id="description" name="description" rows="3" x-model="description"
+                              class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                              placeholder="Payment description (optional)"></textarea>
+                </div>
+            </div>
+
+            <!-- Expiry Time -->
+            <div>
+                <label for="expiry" class="block text-sm font-medium text-gray-700">Expires After</label>
+                <select id="expiry" x-model="expiryTime"
+                        class="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md">
+                    <option value="3600">1 hour</option>
+                    <option value="7200">2 hours</option>
+                    <option value="86400">24 hours</option>
+                </select>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="pt-4">
+                <button type="submit"
+                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                        :disabled="!isValid"
+                        :class="{ 'opacity-50 cursor-not-allowed': !isValid }">
+                    Generate Payment Request
+                </button>
+            </div>
+        </form>
+    </div>
+
+    <!-- QR Code Modal -->
+    <div x-show="showQR" class="fixed z-10 inset-0 overflow-y-auto" style="display: none;">
+        <div class="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
+            <div class="fixed inset-0 transition-opacity" aria-hidden="true">
+                <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+            </div>
+
+            <div class="inline-block align-bottom bg-white rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-sm sm:w-full sm:p-6">
+                <div>
+                    <div class="mt-3 text-center sm:mt-5">
+                        <h3 class="text-lg leading-6 font-medium text-gray-900">
+                            Payment Request
+                        </h3>
+                        <div class="mt-2">
+                            <img :src="qrCode" alt="Payment QR Code" class="mx-auto">
+                            <p class="mt-2 text-sm text-gray-500">
+                                Scan this QR code to make the payment
+                            </p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-5 sm:mt-6">
+                    <button type="button"
+                            @click="showQR = false"
+                            class="inline-flex justify-center w-full rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:text-sm">
+                        Close
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+document.addEventListener('alpine:init', () => {
+    Alpine.data('paymentRequest', () => ({
+        amount: '',
+        currency: 'USD',
+        description: '',
+        expiryTime: '3600',
+        showQR: false,
+        qrCode: null,
+
+        get isValid() {
+            return this.amount > 0;
+        },
+
+        async submitRequest() {
+            if (!this.isValid) return;
+
+            try {
+                const response = await fetch("{{ url_for('payments.create_request') }}", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': CSRF_TOKEN
+                    },
+                    body: JSON.stringify({
+                        amount: this.amount,
+                        currency: this.currency,
+                        description: this.description,
+                        expiry: this.expiryTime
+                    })
+                });
+
+                const data = await response.json();
+                if (data.status === 'success') {
+                    this.qrCode = data.qr_code;
+                    this.showQR = true;
+                } else {
+                    alert('Failed to create payment request');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('An error occurred');
+            }
+        }
+    }));
+});
+</script>
+{% endblock %} 
