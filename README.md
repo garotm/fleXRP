@@ -1,8 +1,8 @@
 # fleXRP Payment Gateway
 
 [![Tests](https://github.com/garotconklin/fleXRP/actions/workflows/test.yml/badge.svg)](https://github.com/garotconklin/fleXRP/actions/workflows/test.yml)
-[![CodeQL](https://github.com/garotconklin/fleXRP/actions/workflows/github-code-scanning/codeql/badge.svg)](https://github.com/garotconklin/fleXRP/actions/workflows/github-code-scanning/codeql)
-[![Dependency Review](https://github.com/garotconklin/fleXRP/actions/workflows/dependency-review.yml/badge.svg)](https://github.com/garotconklin/fleXRP/actions/workflows/dependency-review.yml)
+[![Build & Publish](https://github.com/garotconklin/fleXRP/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/garotconklin/fleXRP/actions/workflows/build-and-publish.yml)
+[![Deploy](https://github.com/garotconklin/fleXRP/actions/workflows/deploy.yml/badge.svg)](https://github.com/garotconklin/fleXRP/actions/workflows/deploy.yml)
 
 A modern, secure payment gateway for XRP integration with merchant systems.
 
