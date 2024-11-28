@@ -1,0 +1,49 @@
+version: 2
+updates:
+  # Python dependencies
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "python"
+    commit-message:
+      prefix: "pip"
+    open-pull-requests-limit: 10
+
+  # npm dependencies (for frontend)
+  - package-ecosystem: "npm"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "javascript"
+    commit-message:
+      prefix: "npm"
+    open-pull-requests-limit: 10
+
+  # GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "ci"
+    commit-message:
+      prefix: "github-actions"
+    open-pull-requests-limit: 10
+
+  # Docker dependencies
+  - package-ecosystem: "docker"
+    directory: "/docker"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "dependencies"
+      - "docker"
+    commit-message:
+      prefix: "docker"
+    open-pull-requests-limit: 10
