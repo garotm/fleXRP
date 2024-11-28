@@ -1,0 +1,10 @@
+Flask>=2.0.0
+python-dotenv>=0.19.0
+xrpl-py>=1.0.0
+SQLAlchemy>=1.4.0
+alembic>=1.7.0
+pytest>=7.0.0
+pytest-cov>=3.0.0
+flake8>=4.0.0
+black>=22.0.0
+mypy>=0.950 
