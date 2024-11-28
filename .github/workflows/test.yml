@@ -14,5 +14,9 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install -r requirements-dev.txt
+      - name: Create test directory if not exists
+        run: |
+          mkdir -p tests
+          touch tests/__init__.py
       - name: Run tests
         run: pytest --cov=src tests/
