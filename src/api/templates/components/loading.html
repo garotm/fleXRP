@@ -1,0 +1,40 @@
+{% macro spinner(size='md', color='indigo') %}
+<div class="flex items-center justify-center">
+    <div class="animate-spin rounded-full border-t-2 border-b-2 border-{{ color }}-600
+                {% if size == 'sm' %}h-4 w-4
+                {% elif size == 'md' %}h-8 w-8
+                {% elif size == 'lg' %}h-12 w-12
+                {% endif %}">
+    </div>
+</div>
+{% endmacro %}
+
+{% macro loading_overlay() %}
+<div class="fixed inset-0 bg-gray-500 bg-opacity-75 flex items-center justify-center z-50">
+    <div class="bg-white rounded-lg px-4 py-5 shadow-xl transform transition-all sm:max-w-sm sm:w-full sm:p-6">
+        <div class="flex flex-col items-center">
+            {{ spinner('lg') }}
+            <h3 class="mt-2 text-lg font-medium text-gray-900">Loading...</h3>
+        </div>
+    </div>
+</div>
+{% endmacro %}
+
+{% macro skeleton_text(width='full', height='4') %}
+<div class="animate-pulse">
+    <div class="h-{{ height }} bg-gray-200 rounded w-{{ width }}"></div>
+</div>
+{% endmacro %}
+
+{% macro skeleton_card() %}
+<div class="animate-pulse">
+    <div class="rounded-lg bg-white shadow p-6">
+        <div class="h-4 bg-gray-200 rounded w-3/4"></div>
+        <div class="space-y-3 mt-4">
+            <div class="h-4 bg-gray-200 rounded"></div>
+            <div class="h-4 bg-gray-200 rounded w-5/6"></div>
+            <div class="h-4 bg-gray-200 rounded w-2/3"></div>
+        </div>
+    </div>
+</div>
+{% endmacro %} 

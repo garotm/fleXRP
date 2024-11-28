@@ -1,222 +1,158 @@
-# fleXRP - Enterprise Crypto-to-Fiat Payment System
+# fleXRP Payment Gateway
 
-A production-grade payment processing system enabling merchants to accept XRP cryptocurrency payments with instant fiat settlement.
+A modern, secure payment gateway for XRP integration with merchant systems.
 
-## System Architecture
+## Project Overview
+
+fleXRP is a comprehensive payment gateway that enables merchants to easily accept XRP payments. It provides a robust API, user-friendly dashboard, and seamless integration options for various e-commerce platforms.
+
+## Features
+
+### Core Features
+- Secure XRP payment processing
+- Real-time transaction monitoring
+- Automated payment reconciliation
+- Multi-currency support with automatic conversion
+- Comprehensive merchant dashboard
+- Detailed analytics and reporting
+- Webhook integrations
+- API access for custom integrations
+
+### Technical Features
+- Modern, responsive UI built with TailwindCSS
+- Real-time updates using WebSocket connections
+- Comprehensive error handling and logging
+- Rate limiting and DDoS protection
+- Automated backup system
+- Extensive test coverage
+- Docker containerization
+- CI/CD pipeline integration
+
+## Project Structure
 
 ```
 fleXRP/
-├── src/
-│   ├── core/              # Core system components
-│   │   ├── exceptions.py  # Custom exception hierarchy
-│   │   ├── error_handlers.py  # Error handling utilities
-│   │   ├── metrics.py     # Metrics collection
-│   │   └── monitoring.py  # System monitoring
-│   ├── services/          # Business logic services
-│   │   ├── payment_monitor.py  # XRPL payment monitoring
-│   │   ├── wallet_service.py   # Wallet management
-│   │   └── rate_service.py     # Exchange rates
-│   ├── api/               # API endpoints
-│   │   ├── routes.py      # Route definitions
-│   │   └── handlers.py    # Request handlers
-│   └── app.py            # Application entry point
-├── tests/                # Test suite
-├── terraform/            # Infrastructure as Code
-├── docs/                # Documentation
-└── config/              # Configuration files
+├── docs/                    # Documentation
+├── src/                     # Source code
+│   ├── api/                # API implementation
+│   │   ├── static/         # Static assets (JS, CSS)
+│   │   ├── templates/      # HTML templates
+│   │   └── views/          # Route handlers
+│   ├── core/               # Core business logic
+│   ├── db/                 # Database models and migrations
+│   └── utils/              # Utility functions
+├── tests/                  # Test suite
+├── docker/                 # Docker configuration
+└── scripts/                # Utility scripts
 ```
 
-## Core Features
+## Phase Completion Status
 
-### Payment Processing
-- Real-time XRPL transaction monitoring
-- Automated payment verification
-- Multi-signature support
-- Rate-limiting and fraud prevention
+### ✅ Phase 1: Project Setup and Basic Structure
+- Basic project structure
+- Development environment setup
+- Initial documentation
+- Core dependencies
 
-### Wallet Management
-- Secure wallet generation
-- Encrypted storage
-- Key rotation
-- Multi-wallet support
+### ✅ Phase 2: Core Functionality
+- Database models and migrations
+- XRP integration
+- Payment processing logic
+- Basic API endpoints
+- Authentication system
 
-### Rate Management
-- Real-time exchange rates
-- Multi-exchange aggregation
-- Rate caching
-- Slippage protection
-
-### Security
-- Encrypted data storage
-- Role-based access control
-- Audit logging
+### ✅ Phase 3: API and Backend Features
+- Complete API implementation
+- Webhook system
+- Transaction monitoring
+- Error handling
+- Logging system
 - Rate limiting
 
-## Technical Stack
+### ✅ Phase 4: Frontend and UI
+- Dashboard implementation
+- Real-time updates
+- Payment forms
+- Transaction history
+- Settings management
+- Loading states and error pages
+- Responsive design
+- Interactive components
 
-### Backend
-- Python 3.9+
-- Flask (API framework)
-- XRPL-py (XRPL integration)
-- SQLAlchemy (Database ORM)
-- Prometheus (Metrics)
-- Grafana (Monitoring)
+### 🔄 Phase 5: Testing and Deployment (In Progress)
+- Unit tests
+- Integration tests
+- E2E tests
+- CI/CD pipeline
+- Deployment scripts
+- Production environment setup
 
-### Infrastructure
-- AWS (Cloud platform)
-- Terraform (IaC)
-- Docker (Containerization)
-- GitHub Actions (CI/CD)
+## Installation
 
-### Storage
-- PostgreSQL (Primary database)
-- Redis (Caching)
-- S3 (File storage)
-
-## Getting Started
-
-### Prerequisites
+1. Clone the repository:
 ```bash
-# Python 3.9+
-python --version
-
-# Poetry (dependency management)
-curl -sSL https://install.python-poetry.org | python3 -
-
-# AWS CLI
-aws --version
-
-# Terraform
-terraform --version
-```
-
-### Installation
-
-1. Clone repository:
-```bash
-git clone https://github.com/your-org/flexrp.git
-cd flexrp
+git clone https://github.com/yourusername/fleXRP.git
+cd fleXRP
 ```
 
 2. Install dependencies:
 ```bash
-poetry install
+pip install -r requirements.txt
+npm install
 ```
 
-3. Configure environment:
+3. Set up environment variables:
 ```bash
 cp .env.example .env
 # Edit .env with your configuration
 ```
 
-4. Initialize infrastructure:
+4. Initialize the database:
 ```bash
-cd terraform
-terraform init
-terraform apply
+flask db upgrade
 ```
 
-5. Start application:
+5. Start the development server:
 ```bash
-poetry run python src/app.py
+flask run
 ```
 
 ## Development
 
-### Code Style
-- Black for formatting
-- Flake8 for linting
-- MyPy for type checking
-- Pytest for testing
+### Frontend Development
+```bash
+# Start the frontend development server
+npm run dev
 
-### Testing
+# Build for production
+npm run build
+```
+
+### Backend Development
 ```bash
 # Run tests
-poetry run pytest
+pytest
 
-# Run with coverage
-poetry run pytest --cov=src
+# Run linting
+flake8
 
-# Type checking
-poetry run mypy src
+# Generate documentation
+make docs
 ```
-
-### Infrastructure
-```bash
-# Initialize Terraform
-cd terraform
-terraform init
-
-# Plan changes
-terraform plan
-
-# Apply changes
-terraform apply
-```
-
-## Deployment
-
-### Production Setup
-1. Configure AWS credentials
-2. Update production configuration
-3. Deploy infrastructure
-4. Configure monitoring
-5. Enable alerts
-
-### Monitoring
-- System metrics
-- Transaction monitoring
-- Error tracking
-- Performance metrics
-- Resource utilization
-
-### Maintenance
-- Database backups
-- Log rotation
-- Security updates
-- Performance optimization
-
-## Security
-
-### Data Protection
-- Encrypted storage
-- Secure key management
-- Access control
-- Audit logging
-
-### Compliance
-- KYC/AML integration
-- Regulatory reporting
-- Data retention
-- Privacy protection
-
-## Support
-
-### Documentation
-- API documentation: `/docs/api`
-- Architecture: `/docs/architecture`
-- Operations: `/docs/operations`
-- Security: `/docs/security`
-
-### Contact
-- Technical Support: support@flexrp.com
-- Security Issues: security@flexrp.com
-- General Inquiries: info@flexrp.com
 
 ## Contributing
 
-1. Fork repository
-2. Create feature branch
-3. Implement changes
-4. Add tests
-5. Submit pull request
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
 ## License
 
-Copyright (c) 2024 fleXRP. All rights reserved.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Acknowledgments
+## Contact
 
-- XRPL Foundation
-- Open Source Contributors
-- Security Researchers
+Garot Conklin - [@LinkedIn](https://www.linkedin.com/in/garot-conklin)
+Project Link: [https://github.com/garotm/fleXRP](https://github.com/garotm/fleXRP)
