@@ -7,14 +7,17 @@
 {% endblock %}
 
 {% block content %}
-<div x-data="dashboard">
+<div x-data="dashboard()" class="container mx-auto px-4 py-6">
     <!-- Balance Overview -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
         <!-- XRP Balance -->
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-semibold text-gray-700 mb-2">XRP Balance</h3>
             <div class="text-3xl font-bold text-indigo-600">
-                {{ "%.4f"|format(balance_xrp) }} XRP
+                <span x-text="formatNumber(balance_xrp, 4)"></span> XRP
+            </div>
+            <div class="text-sm text-gray-500 mt-2">
+                ≈ $<span x-text="formatNumber(balance_xrp * rates.USD, 2)"></span> USD
             </div>
         </div>
         
@@ -22,7 +25,10 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-semibold text-gray-700 mb-2">USD Balance</h3>
             <div class="text-3xl font-bold text-green-600">
-                ${{ "%.2f"|format(balances.USD) }}
+                $<span x-text="formatNumber(balances.USD, 2)"></span>
+            </div>
+            <div class="text-sm text-gray-500 mt-2">
+                Available for withdrawal
             </div>
         </div>
         
@@ -30,66 +36,92 @@
         <div class="bg-white rounded-lg shadow p-6">
             <h3 class="text-lg font-semibold text-gray-700 mb-2">XRP/USD Rate</h3>
             <div class="text-3xl font-bold text-blue-600">
-                ${{ "%.4f"|format(rates.USD) }}
+                $<span x-text="formatNumber(rates.USD, 4)"></span>
+            </div>
+            <div class="text-sm text-gray-500 mt-2">
+                Last updated: <span x-text="formatDate(lastRateUpdate)"></span>
             </div>
         </div>
     </div>
 
     <!-- Transaction Chart -->
     <div class="bg-white rounded-lg shadow p-6 mb-6">
-        <h3 class="text-lg font-semibold text-gray-700 mb-4">Transaction Volume</h3>
+        <div class="flex justify-between items-center mb-4">
+            <h3 class="text-lg font-semibold text-gray-700">Transaction Volume</h3>
+            <div class="flex space-x-2">
+                <button @click="updateChartPeriod('day')" 
+                        :class="{'bg-indigo-100 text-indigo-700': chartPeriod === 'day'}"
+                        class="px-3 py-1 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100">
+                    Day
+                </button>
+                <button @click="updateChartPeriod('week')"
+                        :class="{'bg-indigo-100 text-indigo-700': chartPeriod === 'week'}"
+                        class="px-3 py-1 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100">
+                    Week
+                </button>
+                <button @click="updateChartPeriod('month')"
+                        :class="{'bg-indigo-100 text-indigo-700': chartPeriod === 'month'}"
+                        class="px-3 py-1 rounded-md text-sm font-medium text-gray-600 hover:bg-gray-100">
+                    Month
+                </button>
+            </div>
+        </div>
         <canvas id="transactionChart" height="300"></canvas>
     </div>
 
     <!-- Recent Transactions -->
     <div class="bg-white rounded-lg shadow">
-        <div class="px-6 py-4 border-b border-gray-200">
+        <div class="px-6 py-4 border-b border-gray-200 flex justify-between items-center">
             <h3 class="text-lg font-semibold text-gray-700">Recent Transactions</h3>
+            <a href="{{ url_for('transactions.index') }}" 
+               class="text-sm text-indigo-600 hover:text-indigo-500">
+                View all
+            </a>
         </div>
         <div class="overflow-x-auto">
             <table class="min-w-full divide-y divide-gray-200">
                 <thead class="bg-gray-50">
                     <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Date
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Type
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Amount (XRP)
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Amount (USD)
                         </th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                        <th scope="col" class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                             Status
                         </th>
                     </tr>
                 </thead>
                 <tbody class="bg-white divide-y divide-gray-200">
-                    {% for tx in transactions %}
-                    <tr>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                            {{ tx.timestamp|datetime }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ tx.type }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            {{ "%.4f"|format(tx.amount_xrp) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                            ${{ "%.2f"|format(tx.amount_usd) }}
-                        </td>
-                        <td class="px-6 py-4 whitespace-nowrap">
-                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full 
-                                       {{ tx.status|status_class }}">
-                                {{ tx.status }}
-                            </span>
-                        </td>
-                    </tr>
-                    {% endfor %}
+                    <template x-for="tx in transactions" :key="tx.id">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                                <span x-text="formatDate(tx.timestamp)"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span x-text="tx.type"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                <span x-text="formatNumber(tx.amount_xrp, 4)"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                $<span x-text="formatNumber(tx.amount_usd, 2)"></span>
+                            </td>
+                            <td class="px-6 py-4 whitespace-nowrap">
+                                <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full"
+                                      :class="getStatusClass(tx.status)">
+                                    <span x-text="tx.status"></span>
+                                </span>
+                            </td>
+                        </tr>
+                    </template>
                 </tbody>
             </table>
         </div>
@@ -98,42 +130,118 @@
 {% endblock %}
 
 {% block extra_scripts %}
-<script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+<script src="{{ url_for('static', filename='js/chart.min.js') }}"></script>
 <script>
-    // Initialize dashboard
-    document.addEventListener('alpine:init', () => {
-        Alpine.data('dashboard', () => ({
-            init() {
-                this.initChart();
-                this.initLiveUpdates();
-            },
-            
-            initChart() {
-                const ctx = document.getElementById('transactionChart').getContext('2d');
-                const chart = new Chart(ctx, {
-                    type: 'line',
-                    data: {{ analytics.chart_data|tojson }},
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        // ... chart options
+document.addEventListener('alpine:init', () => {
+    Alpine.data('dashboard', () => ({
+        balance_xrp: JSON.parse('{{ balance_xrp|default(0)|tojson|safe }}'),
+        balances: JSON.parse('{{ balances|default({})|tojson|safe }}'),
+        rates: JSON.parse('{{ rates|default({})|tojson|safe }}'),
+        transactions: JSON.parse('{{ transactions|default([])|tojson|safe }}'),
+        lastRateUpdate: new Date().toISOString(),
+        chartPeriod: 'week',
+        chart: null,
+
+        init() {
+            this.initChart();
+            this.initLiveUpdates();
+        },
+
+        formatNumber(value, decimals) {
+            return Number(value).toFixed(decimals);
+        },
+
+        formatDate(dateString) {
+            return new Date(dateString).toLocaleString();
+        },
+
+        getStatusClass(status) {
+            return {
+                'completed': 'bg-green-100 text-green-800',
+                'pending': 'bg-yellow-100 text-yellow-800',
+                'failed': 'bg-red-100 text-red-800'
+            }[status.toLowerCase()] || 'bg-gray-100 text-gray-800';
+        },
+
+        initChart() {
+            const ctx = document.getElementById('transactionChart').getContext('2d');
+            this.chart = new Chart(ctx, {
+                type: 'line',
+                data: JSON.parse('{{ chart_data|default({})|tojson|safe }}'),
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value.toLocaleString();
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            callbacks: {
+                                label: function(context) {
+                                    return '$' + context.raw.toLocaleString();
+                                }
+                            }
+                        }
                     }
-                });
-            },
-            
-            initLiveUpdates() {
-                const eventSource = new EventSource("{{ url_for('dashboard.live_transactions') }}");
-                eventSource.onmessage = (event) => {
-                    const transaction = JSON.parse(event.data);
-                    this.updateTransactions(transaction);
-                };
-            },
-            
-            updateTransactions(transaction) {
-                // Update transaction list
-                // ... implementation
+                }
+            });
+        },
+
+        async updateChartPeriod(period) {
+            this.chartPeriod = period;
+            try {
+                const response = await fetch(`/api/analytics/chart-data?period=${period}`);
+                const data = await response.json();
+                this.chart.data = data;
+                this.chart.update();
+            } catch (error) {
+                console.error('Failed to update chart:', error);
             }
-        }));
-    });
+        },
+
+        initLiveUpdates() {
+            const eventSource = new EventSource("{{ url_for('dashboard.live_updates') }}");
+            
+            eventSource.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                this.handleLiveUpdate(data);
+            };
+
+            eventSource.onerror = (error) => {
+                console.error('SSE Error:', error);
+                eventSource.close();
+                setTimeout(() => this.initLiveUpdates(), 5000); // Retry after 5 seconds
+            };
+        },
+
+        handleLiveUpdate(data) {
+            if (data.type === 'transaction') {
+                this.transactions.unshift(data.transaction);
+                if (this.transactions.length > 10) {
+                    this.transactions.pop();
+                }
+            } else if (data.type === 'balance') {
+                this.balance_xrp = data.balance_xrp;
+                this.balances = data.balances;
+            } else if (data.type === 'rate') {
+                this.rates = data.rates;
+                this.lastRateUpdate = new Date().toISOString();
+            }
+        }
+    }));
+});
 </script>
 {% endblock %} 
