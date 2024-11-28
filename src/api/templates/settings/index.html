@@ -131,7 +131,7 @@
 document.addEventListener('alpine:init', () => {
     Alpine.data('settingsManager', () => ({
         activeTab: 'general',
-        settings: {{ settings|tojson|safe }},
+        settings: JSON.parse('{{ settings|tojson|safe }}'),
         
         async saveGeneralSettings() {
             try {
