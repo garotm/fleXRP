@@ -1,5 +1,6 @@
 Flask>=3.0.0
 Flask-Limiter>=3.5.0
+Flask-WTF>=1.2.1
 xrpl-py>=2.0.0
 python-dotenv>=1.0.0
 # Add any other production dependencies your app needs 
