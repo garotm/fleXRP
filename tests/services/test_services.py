@@ -18,14 +18,8 @@ async def test_get_account_info():
     assert isinstance(account_info, dict)
     assert "account_data" in account_info 
 
-def test_payment_monitor_exists():
-    """Test payment monitor service exists"""
+def test_services_exist():
+    """Test service modules exist"""
     assert payment_monitor is not None
-
-def test_rate_service_exists():
-    """Test rate service exists"""
     assert rate_service is not None
-
-def test_wallet_service_exists():
-    """Test wallet service exists"""
     assert wallet_service is not None 
