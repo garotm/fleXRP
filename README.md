@@ -1,8 +1,8 @@
-# fleXRP Payment Gateway
+[![Tests](https://github.com/fleXRPL/fleXRP/actions/workflows/test.yml/badge.svg)](https://github.com/fleXRPL/fleXRP/actions/workflows/test.yml)
+[![Build & Publish](https://github.com/fleXRPL/fleXRP/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/fleXRPL/fleXRP/actions/workflows/build-and-publish.yml)
+[![Deploy](https://github.com/fleXRPL/fleXRP/actions/workflows/deploy.yml/badge.svg)](https://github.com/fleXRPL/fleXRP/actions/workflows/deploy.yml)
 
-[![Tests](https://github.com/garotconklin/fleXRP/actions/workflows/test.yml/badge.svg)](https://github.com/garotconklin/fleXRP/actions/workflows/test.yml)
-[![Build & Publish](https://github.com/garotconklin/fleXRP/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/garotconklin/fleXRP/actions/workflows/build-and-publish.yml)
-[![Deploy](https://github.com/garotconklin/fleXRP/actions/workflows/deploy.yml/badge.svg)](https://github.com/garotconklin/fleXRP/actions/workflows/deploy.yml)
+# fleXRP Payment Gateway
 
 A modern, secure payment gateway for XRP integration with merchant systems.
 
