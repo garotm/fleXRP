@@ -1,0 +1,39 @@
+# Default owners for everything in the repo
+# These users will be requested for review when someone opens a pull request
+* @garotconklin @theusc6
+
+# API related files
+/src/api/ @garotconklin @theusc6
+/src/api/routes/ @garotconklin @theusc6
+/src/api/templates/ @garotconklin @theusc6
+
+# Core functionality
+/src/core/ @garotconklin @theusc6
+
+# Services
+/src/services/ @garotconklin @theusc6
+
+# Tests
+/tests/ @garotconklin @theusc6
+
+# Documentation
+/docs/ @garotconklin @theusc6
+*.md @garotconklin @theusc6
+
+# Infrastructure and configuration
+/.github/ @garotconklin @theusc6
+/docker/ @garotconklin @theusc6
+*.yml @garotconklin @theusc6
+*.toml @garotconklin @theusc6
+requirements*.txt @garotconklin @theusc6
+
+# Frontend assets
+/src/api/templates/ @garotconklin @theusc6
+*.html @garotconklin @theusc6
+*.css @garotconklin @theusc6
+*.js @garotconklin @theusc6
+
+# Security-sensitive files
+/src/core/error_handlers.py @garotconklin @theusc6
+/src/core/exceptions.py @garotconklin @theusc6
+/src/core/monitoring.py @garotconklin @theusc6
