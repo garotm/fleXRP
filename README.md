@@ -160,7 +160,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 Garot Conklin - [@LinkedIn](https://www.linkedin.com/in/garot-conklin)
 Project Link: [https://github.com/garotm/fleXRP](https://github.com/garotm/fleXRP)
-
-[![Tests](https://github.com/fleXRPL/fleXRP/actions/workflows/test.yml/badge.svg)](https://github.com/fleXRPL/fleXRP/actions/workflows/test.yml)
-[![Build & Publish](https://github.com/fleXRPL/fleXRP/actions/workflows/build-and-publish.yml/badge.svg)](https://github.com/fleXRPL/fleXRP/actions/workflows/build-and-publish.yml)
-[![Deploy](https://github.com/fleXRPL/fleXRP/actions/workflows/deploy.yml/badge.svg)](https://github.com/fleXRPL/fleXRP/actions/workflows/deploy.yml)
