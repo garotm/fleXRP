@@ -1,0 +1,120 @@
+# .github/workflows/terraform.yml
+name: 'Terraform & Security'
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'infrastructure/terraform/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'infrastructure/terraform/**'
+
+jobs:
+  security:
+    name: 'Security Scan'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Run Checkov
+      uses: bridgecrewio/checkov-action@master
+      with:
+        directory: infrastructure/terraform
+        framework: terraform
+        skip_check: CKV_AWS_1,CKV_AWS_2
+        output_format: cli,sarif
+        output_file_path: checkov-report.sarif
+        soft_fail: true
+
+    - name: Upload SARIF file
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: checkov-report.sarif
+
+  docs:
+    name: 'Generate Documentation'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Render terraform docs
+      uses: terraform-docs/gh-actions@v1.0.0
+      with:
+        working-dir: infrastructure/terraform
+        output-file: README.md
+        output-method: inject
+        git-push: true
+        git-commit-message: "docs: Update Terraform documentation"
+
+  cost:
+    name: 'Cost Estimation'
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Infracost
+      uses: infracost/actions/setup@v2
+      with:
+        api-key: ${{ secrets.INFRACOST_API_KEY }}
+
+    - name: Generate Infracost cost estimate
+      run: |
+        cd infrastructure/terraform
+        infracost breakdown --path . \
+          --format json \
+          --out-file /tmp/infracost.json
+
+    - name: Post Infracost comment
+      if: github.event_name == 'pull_request'
+      uses: infracost/actions/comment@v2
+      with:
+        path: /tmp/infracost.json
+        behavior: update
+
+  terraform:
+    name: 'Terraform'
+    needs: [security, docs, cost]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: ./infrastructure/terraform
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: '1.5.0'
+
+    - name: Terraform Format
+      run: terraform fmt -check
+
+    - name: Terraform Init
+      run: terraform init
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Terraform Validate
+      run: terraform validate
+
+    - name: Terraform Plan
+      run: terraform plan
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    - name: Terraform Apply
+      if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+      run: terraform apply -auto-approve
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
