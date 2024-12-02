@@ -36,8 +36,8 @@ fleXRP is a comprehensive payment gateway that enables merchants to easily accep
 
 ```
 fleXRP/
-├── docs/                    # Documentation
-├── src/                     # Source code
+├── docs/                   # Documentation
+├── src/                    # Source code
 │   ├── api/                # API implementation
 │   │   ├── static/         # Static assets (JS, CSS)
 │   │   ├── templates/      # HTML templates
