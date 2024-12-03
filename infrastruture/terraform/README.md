@@ -6,16 +6,16 @@ This directory contains the Terraform configurations for deploying and managing 
 
 ```
 terraform/
-├── backend/                 # State management configuration
+├── backend/                # State management configuration
 ├── environments/           # Environment-specific configurations
 │   ├── dev/
 │   └── prod/
-├── modules/               # Reusable infrastructure modules
-│   ├── networking/       # VPC, subnets, routing
-│   ├── database/        # RDS instances
-│   ├── compute/        # Lambda, ECS/Fargate
-│   ├── security/      # IAM, Security Groups, KMS
-│   └── monitoring/   # CloudWatch, Alerts
+├── modules/                # Reusable infrastructure modules
+│   ├── networking/         # VPC, subnets, routing
+│   ├── database/           # RDS instances
+│   ├── compute/            # Lambda, ECS/Fargate
+│   ├── security/           # IAM, Security Groups, KMS
+│   └── monitoring/         # CloudWatch, Alerts
 └── README.md
 ```
 

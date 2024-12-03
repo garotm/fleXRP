@@ -46,6 +46,8 @@ fleXRP/
 │   ├── db/                 # Database models and migrations
 │   └── utils/              # Utility functions
 ├── tests/                  # Test suite
+├── infrastructure/         # Infrastructure as Code
+│   ├── terraform/          # Terraform configurations
 ├── docker/                 # Docker configuration
 └── scripts/                # Utility scripts
 ```
