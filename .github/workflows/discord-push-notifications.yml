@@ -1,0 +1,32 @@
+name: Discord Push Notifications
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  notify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Send Discord notification
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const webhookUrl = '${{ secrets.DISCORD_WEBHOOK_URL }}'; // Access the secret directly
+            if (!webhookUrl) {
+              throw new Error('Webhook URL is not set. Please check your GitHub secrets.');
+            }
+            const message = `New push to repository: ${context.repo.repo}\nBranch: ${context.ref}\nCommit: ${context.sha}\nAuthor: ${context.actor}\nLink: https://github.com/${context.repo.repo}/commit/${context.sha}`;
+   
+            const response = await fetch(webhookUrl, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ content: message })
+            });
+   
+            if (!response.ok) {
+              throw new Error(`Discord webhook request failed: ${response.status} ${response.statusText}`);
+            }
