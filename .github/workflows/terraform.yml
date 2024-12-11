@@ -17,7 +17,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Run Checkov
       uses: bridgecrewio/checkov-action@master
@@ -40,10 +40,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Render terraform docs
-      uses: terraform-docs/gh-actions@v1.0.0
+      uses: terraform-docs/gh-actions@v1.3.0
       with:
         working-dir: infrastructure/terraform
         output-file: README.md
@@ -56,10 +56,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup Infracost
-      uses: infracost/actions/setup@v2
+      uses: infracost/actions/setup@v3
       with:
         api-key: ${{ secrets.INFRACOST_API_KEY }}
 
@@ -72,7 +72,7 @@ jobs:
 
     - name: Post Infracost comment
       if: github.event_name == 'pull_request'
-      uses: infracost/actions/comment@v2
+      uses: infracost/actions/comment@v3
       with:
         path: /tmp/infracost.json
         behavior: update
@@ -87,10 +87,10 @@ jobs:
 
     steps:
     - name: Checkout
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Setup Terraform
-      uses: hashicorp/setup-terraform@v2
+      uses: hashicorp/setup-terraform@v3
       with:
         terraform_version: '1.5.0'
 
